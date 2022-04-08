@@ -2,11 +2,17 @@ public enum InputType {
     lessThan,
     equal,
     biggerThan,
-    character,
-    number,
+    letter,
+    digit,
     eOrE,
     dot,
     plusOrMinus,
+    multiply,
+    divide,
+    slashMark,
+    exclamationMark,
     space,
-    separator
+    separator,
+    straightSlashMark,
+    andMark
 }

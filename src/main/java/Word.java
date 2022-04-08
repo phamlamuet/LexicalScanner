@@ -3,4 +3,9 @@ public class Word implements Token{
     public Word(String mLexeme) {
         this.mLexeme = mLexeme;
     }
+
+    @Override
+    public String toString() {
+        return mLexeme;
+    }
 }
