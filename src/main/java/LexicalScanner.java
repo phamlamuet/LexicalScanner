@@ -235,6 +235,7 @@ public class LexicalScanner {
             } else {
                 forwardPointer++;
             }
+
         }
         return new Token("");
     }
