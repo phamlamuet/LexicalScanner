@@ -18,7 +18,7 @@ public class LexicalScanner {
     static String transitionTableFilePath = "D:\\LexicalScanner\\src\\main\\resources\\config.csv";
     static String configStateFilePath = "D:\\LexicalScanner\\src\\main\\resources\\config2.txt";
     String inputData = "";
-    CommentsCleaner commentsCleaner = new CommentsCleaner();
+    CommentsProcess commentsProcess = new CommentsProcess();
     HashMap<String, Token> reservedWord = new HashMap<>();
     HashBasedTable<Integer, InputType, Integer> stateTable = HashBasedTable.create();
     HashMap<Integer, State> stateHashMap = new HashMap<>();
@@ -31,7 +31,7 @@ public class LexicalScanner {
         initReservedWord();
         initStateTable();
         initStateObjectMap();
-        inputData = commentsCleaner.clean();
+        inputData = commentsProcess.clean();
     }
 
 
@@ -220,7 +220,7 @@ public class LexicalScanner {
                     startPointer = forwardPointer;
                     state = 0;
                     Token word = new Token(inputData.substring(tempStartPointer, forwardPointer));
-                    System.out.println(word);
+                  //  System.out.println(word);
                     return word;
                 } else {
                     int tempStartPointer = startPointer;
@@ -228,7 +228,7 @@ public class LexicalScanner {
                     startPointer = forwardPointer;
                     state = 0;
                     Token word = new Token(inputData.substring(tempStartPointer, forwardPointer));
-                    System.out.println(word);
+                   // System.out.println(word);
                     return word;
 
                 }
