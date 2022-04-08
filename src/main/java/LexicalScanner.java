@@ -35,7 +35,6 @@ public class LexicalScanner {
     }
 
 
-
     public void initReservedWord() {
         reserveWord(new Token("boolean"));
         reserveWord(new Token("break"));
@@ -192,16 +191,9 @@ public class LexicalScanner {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Token token = scan();
+        Token token = new Token("");
 
         try {
-//            while (true) {
-//                String text = token.toString();
-//                if(text.isEmpty()||text.isBlank()){
-//                    break;
-//                }
-//                Files.write(fileName, text.getBytes());
-//            }
             while (forwardPointer!=inputData.length()){
                  token = scan();
                  text = token.toString()+"\n";
