@@ -102,7 +102,7 @@ public class LexicalScanner {
                 stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.plusOrMinus, convertCSVCellValueToInteger(cols[8]));
                 stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.plusOrMinus, convertCSVCellValueToInteger(cols[9]));
                 stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.multiply, convertCSVCellValueToInteger(cols[10]));
-                stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.slashMark, convertCSVCellValueToInteger(cols[11]));
+                stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.slashOrDivideMark, convertCSVCellValueToInteger(cols[11]));
                 stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.exclamationMark, convertCSVCellValueToInteger(cols[12]));
                 stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.space, convertCSVCellValueToInteger(cols[13]));
                 stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.separator, convertCSVCellValueToInteger(cols[14]));
@@ -144,7 +144,7 @@ public class LexicalScanner {
         } else if (input == '*') {
             return stateTable.get(currentState, InputType.multiply);
         } else if (input == '/') {
-            return stateTable.get(currentState, InputType.divide);
+            return stateTable.get(currentState, InputType.slashOrDivideMark);
         } else if (input == '|') {
             return stateTable.get(currentState, InputType.straightSlashMark);
         } else if (input == '&') {
@@ -168,8 +168,7 @@ public class LexicalScanner {
     }
 
     public Token scan() {
-        StringBuffer sb = new StringBuffer();
-        while (true) {
+        while (forwardPointer!=inputData.length()) {
             char peek = inputData.charAt(forwardPointer);
             state = getNextState(state, peek);
             if (isFinalState(state)) {
@@ -201,5 +200,6 @@ public class LexicalScanner {
                 forwardPointer++;
             }
         }
+        return new Word("");
     }
 }
