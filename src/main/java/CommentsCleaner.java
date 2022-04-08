@@ -52,6 +52,6 @@ public class CommentsCleaner {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return text;
+        return text+" ";
     }
 }
