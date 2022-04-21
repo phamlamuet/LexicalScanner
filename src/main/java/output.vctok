@@ -1,64 +1,65 @@
-float
-exampleFunction
-(
-boolean
-var1
-,
-int
-var2
-)
-{
-if
-(
-var1
-)
-{
-return
-(
-float
-)
-var2
-;
-}
-else
-{
-return
-94e-1
-;
-}
-}
-int
-main
-(
-)
-{
-boolean
-b
-=
-true
-;
-boolean
-c
-=
-!
-b
-;
-int
-d
-=
-4420
-;
-float
-r
-=
-exampleFunction
-(
-c
-,
-d
-)
-;
-return
-0
-;
-}
+float keyword
+exampleFunction identifier
+( separator
+boolean keyword
+var1 identifier
+, separator
+int keyword
+var2 identifier
+) separator
+{ separator
+if keyword
+( separator
+var1 identifier
+) separator
+{ separator
+return identifier
+( separator
+float keyword
+) separator
+var2 identifier
+; separator
+} separator
+else keyword
+{ separator
+return identifier
+94e-1 real number
+; separator
+} separator
+} separator
+int keyword
+main identifier
+( separator
+) separator
+{ separator
+boolean keyword
+b identifier
+= operator
+true identifier
+; separator
+boolean keyword
+c identifier
+= operator
+! operator
+b identifier
+; separator
+int keyword
+d identifier
+= operator
+4420 real number
+; separator
+float keyword
+r identifier
+= operator
+exampleFunction identifier
+( separator
+c identifier
+, separator
+d identifier
+) separator
+; separator
+return identifier
+0 real number
+; separator
+} separator
+ 

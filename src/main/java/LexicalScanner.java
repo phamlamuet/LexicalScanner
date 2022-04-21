@@ -22,6 +22,7 @@ public class LexicalScanner {
     HashMap<String, Token> reservedWord = new HashMap<>();
     HashBasedTable<Integer, InputType, Integer> stateTable = HashBasedTable.create();
     HashMap<Integer, State> stateHashMap = new HashMap<>();
+    HashMap<Integer, String> tokenTypeMap = new HashMap<>();
 
     public void reserveWord(Token word) {
         reservedWord.put(word.mLexeme, word);
@@ -31,9 +32,20 @@ public class LexicalScanner {
         initReservedWord();
         initStateTable();
         initStateObjectMap();
-        inputData = commentsProcess.clean();
+        //inputData = commentsProcess.clean();
+        readInputFile();
+        initTypeMap();
     }
 
+    public void readInputFile() {
+        Path fileName
+                = Path.of(LexicalScanner.inputFilePath);
+        try {
+            inputData = Files.readString(fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void initReservedWord() {
         reserveWord(new Token("boolean"));
@@ -49,6 +61,35 @@ public class LexicalScanner {
         reserveWord(new Token("char"));
     }
 
+    public void initTypeMap() {
+        tokenTypeMap.put(2, TokenType.OPERATOR);
+        tokenTypeMap.put(5, TokenType.OPERATOR);
+        tokenTypeMap.put(6, TokenType.OPERATOR);
+        tokenTypeMap.put(8, TokenType.OPERATOR);
+        tokenTypeMap.put(9, TokenType.OPERATOR);
+        tokenTypeMap.put(11, TokenType.OPERATOR);
+        tokenTypeMap.put(12, TokenType.OPERATOR);
+        tokenTypeMap.put(13, TokenType.OPERATOR);
+        tokenTypeMap.put(15, TokenType.OPERATOR);
+        tokenTypeMap.put(17, TokenType.OPERATOR);
+
+        tokenTypeMap.put(18, TokenType.SEPARATOR);
+
+        tokenTypeMap.put(25, TokenType.REAL_NUMBER);
+        tokenTypeMap.put(26, TokenType.REAL_NUMBER);
+        tokenTypeMap.put(27, TokenType.REAL_NUMBER);
+        tokenTypeMap.put(38, TokenType.REAL_NUMBER);
+
+        tokenTypeMap.put(29, TokenType.DELIMITER);
+
+        tokenTypeMap.put(37, TokenType.IDENTIFIER);
+
+        tokenTypeMap.put(42, TokenType.COMMENT);
+        tokenTypeMap.put(45, TokenType.COMMENT);
+
+
+    }
+
     public void initStateObjectMap() {
         String configStateFile = configStateFilePath;
         try {
@@ -62,7 +103,7 @@ public class LexicalScanner {
                 stateHashMap.put(id, new State(id, false, false));
                 //System.out.println(stateHashMap.get(id));
             }
-            // read all final state but not retract
+            // read all final states but not retract
             line = br.readLine();
             cols = line.split(",");
             for (int i = 0; i < cols.length; i++) {
@@ -114,6 +155,7 @@ public class LexicalScanner {
                 stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.separator, convertCSVCellValueToInteger(cols[14]));
                 stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.straightSlashMark, convertCSVCellValueToInteger(cols[15]));
                 stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.andMark, convertCSVCellValueToInteger(cols[16]));
+                stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.endLine, convertCSVCellValueToInteger(cols[17]));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -127,7 +169,7 @@ public class LexicalScanner {
     Integer getNextState(int currentState, char input) {
         if (Character.isDigit(input)) {
             return stateTable.get(currentState, InputType.digit);
-        } else if ((input == 'e' || input == 'E') && (state == 19||state==21) ) {  //processing
+        } else if ((input == 'e' || input == 'E') && (state == 19 || state == 21)) {  //processing
             return stateTable.get(currentState, InputType.eOrE);
         } else if (Character.isLetter(input) || input == '_') {
             return stateTable.get(currentState, InputType.letter);  //for identifier
@@ -141,7 +183,7 @@ public class LexicalScanner {
             return stateTable.get(currentState, InputType.dot);
         } else if (input == '+' || input == '-') {
             return stateTable.get(currentState, InputType.plusOrMinus);
-        } else if (input == ' ' || input == '\n' || input == '\r' || input == '\b' || input == '\t' || input == '\f') {
+        } else if (input == ' ' || input == '\r' || input == '\b' || input == '\t' || input == '\f') {
             return stateTable.get(currentState, InputType.space);
         } else if (input == '(' || input == ')' || input == '{' || input == '}' || input == ';' || input == ',' || input == '[' || input == ']') {
             return stateTable.get(currentState, InputType.separator);
@@ -155,11 +197,11 @@ public class LexicalScanner {
             return stateTable.get(currentState, InputType.straightSlashMark);
         } else if (input == '&') {
             return stateTable.get(currentState, InputType.andMark);
+        } else if (input == '\n') {
+            return stateTable.get(currentState, InputType.endLine);
         }
-
         return -1;
     }
-
 
     boolean isFinalState(int state) {
         return stateHashMap.get(state).accepted;
@@ -169,23 +211,23 @@ public class LexicalScanner {
         return stateHashMap.get(state).retract;
     }
 
-    void fail(char input){
+    void fail(char input) {
 
-        while (true){
+        while (true) {
             forwardPointer++;
-            if(inputData.charAt(forwardPointer)==' '){
+            if (inputData.charAt(forwardPointer) == ' ') {
                 break;
             }
         }
-        System.out.println("Error token "+ inputData.substring(startPointer,forwardPointer));
+        System.out.println("Error token " + inputData.substring(startPointer, forwardPointer));
         startPointer = forwardPointer;
         state = 0;
     }
 
-    void writeTokensToOutputFile(){
+    void writeTokensToOutputFile() {
         Path fileName
                 = Path.of(LexicalScanner.outputFilePath);
-        String text="";
+        String text = "";
         try {
             Files.write(fileName, text.getBytes());
         } catch (IOException e) {
@@ -194,23 +236,36 @@ public class LexicalScanner {
         Token token = new Token("");
 
         try {
-            while (forwardPointer!=inputData.length()){
-                 token = scan();
-                 text = token.toString()+"\n";
-                 if(text.isEmpty()||text.isBlank()){
-                     continue;
-                 }
-                 Files.write(fileName, text.getBytes(),StandardOpenOption.APPEND);
+            while (forwardPointer != inputData.length()) {
+                token = scan();
+                if (token.tokenType == TokenType.DELIMITER || token.tokenType == TokenType.COMMENT) {
+                    continue;
+                }
+                text = token.toString() + "\n";
+//                if (text.isEmpty() || text.isBlank()) {
+//                    continue;
+//                }
+                Files.write(fileName, text.getBytes(), StandardOpenOption.APPEND);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    Token getToken(int start, int end, int acceptState) {
+        String lexeme = inputData.substring(start, end);
+        String type = tokenTypeMap.get(acceptState);
+        if(reservedWord.get(lexeme)!=null){
+            type = TokenType.KEYWORD;
+        }
+        return new Token(lexeme, type);
+    }
+
     public Token scan() {
-        while (forwardPointer!=inputData.length()) {
+        while (forwardPointer != inputData.length()) {
             char peek = inputData.charAt(forwardPointer);
             state = getNextState(state, peek);
-            if(state==null||state==-1){
+            if (state == null || state == -1) {
                 fail(inputData.charAt(startPointer));
                 break;
             }
@@ -218,17 +273,21 @@ public class LexicalScanner {
                 if (isRetractState(state)) {
                     int tempStartPointer = startPointer;
                     startPointer = forwardPointer;
+
+                    //Token word = new Token(inputData.substring(tempStartPointer, forwardPointer));
+                    Token word = getToken(tempStartPointer, forwardPointer, state);
                     state = 0;
-                    Token word = new Token(inputData.substring(tempStartPointer, forwardPointer));
-                  //  System.out.println(word);
+                    //  System.out.println(word);
                     return word;
                 } else {
                     int tempStartPointer = startPointer;
                     forwardPointer++;
                     startPointer = forwardPointer;
+
+                    //Token word = new Token(inputData.substring(tempStartPointer, forwardPointer));
+                    Token word = getToken(tempStartPointer, forwardPointer, state);
                     state = 0;
-                    Token word = new Token(inputData.substring(tempStartPointer, forwardPointer));
-                   // System.out.println(word);
+                    // System.out.println(word);
                     return word;
 
                 }
@@ -237,7 +296,7 @@ public class LexicalScanner {
             }
 
         }
-        return new Token("");
+        return new Token("", "");
     }
 
 }
