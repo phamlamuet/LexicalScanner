@@ -14,5 +14,6 @@ public enum InputType {
     separator,
     straightSlashMark,
     andMark,
-    endLine
+    endLine,
+    unknown
 }

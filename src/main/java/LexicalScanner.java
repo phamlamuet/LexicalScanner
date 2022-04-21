@@ -72,6 +72,7 @@ public class LexicalScanner {
         tokenTypeMap.put(13, TokenType.OPERATOR);
         tokenTypeMap.put(15, TokenType.OPERATOR);
         tokenTypeMap.put(17, TokenType.OPERATOR);
+        tokenTypeMap.put(43, TokenType.OPERATOR);
 
         tokenTypeMap.put(18, TokenType.SEPARATOR);
 
@@ -156,6 +157,7 @@ public class LexicalScanner {
                 stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.straightSlashMark, convertCSVCellValueToInteger(cols[15]));
                 stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.andMark, convertCSVCellValueToInteger(cols[16]));
                 stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.endLine, convertCSVCellValueToInteger(cols[17]));
+                stateTable.put(convertCSVCellValueToInteger(cols[0]), InputType.unknown, convertCSVCellValueToInteger(cols[18]));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -200,7 +202,7 @@ public class LexicalScanner {
         } else if (input == '\n') {
             return stateTable.get(currentState, InputType.endLine);
         }
-        return -1;
+        else return stateTable.get(currentState,InputType.unknown);
     }
 
     boolean isFinalState(int state) {
