@@ -42,6 +42,7 @@ public class LexicalScanner {
                 = Path.of(LexicalScanner.inputFilePath);
         try {
             inputData = Files.readString(fileName);
+            inputData += " ";
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -201,8 +202,7 @@ public class LexicalScanner {
             return stateTable.get(currentState, InputType.andMark);
         } else if (input == '\n') {
             return stateTable.get(currentState, InputType.endLine);
-        }
-        else return stateTable.get(currentState,InputType.unknown);
+        } else return stateTable.get(currentState, InputType.unknown);
     }
 
     boolean isFinalState(int state) {
@@ -257,7 +257,7 @@ public class LexicalScanner {
     Token getToken(int start, int end, int acceptState) {
         String lexeme = inputData.substring(start, end);
         String type = tokenTypeMap.get(acceptState);
-        if(reservedWord.get(lexeme)!=null){
+        if (reservedWord.get(lexeme) != null) {
             type = TokenType.KEYWORD;
         }
         return new Token(lexeme, type);
