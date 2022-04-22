@@ -23,6 +23,7 @@ public class CommentsProcess {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        String txt = text;
 
         Matcher commentsMatcher = commentsPattern.matcher(text);
         while (commentsMatcher.find()) {
@@ -47,11 +48,11 @@ public class CommentsProcess {
         for (Match comment : commentMatches)
             text = text.replace(comment.text, " ");
 
-        try {
-            Files.write(fileName, text.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return text+" ";
+//        try {
+//            Files.write(fileName, text.getBytes());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        return txt+" ";
     }
 }
